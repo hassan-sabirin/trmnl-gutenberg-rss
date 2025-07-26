@@ -1,0 +1,72 @@
+<!-- Project Gutenberg Recent Books trmnl Plugin -->
+<!-- Data source: http://www.gutenberg.org/cache/epub/feeds/today.rss -->
+
+      <div class="layout">
+        
+        <!-- Books List -->
+        <div class="columns">
+          {% assign book_count = 0 %}
+          {% assign total_books = rss.channel.item | size %}
+          {% assign half_count = total_books | times: 0.5 | ceil %}
+          
+          <!-- First Column -->
+          <div class="column">
+            {% for item in rss.channel.item limit: half_count %}
+              {% assign book_count = book_count | plus: 1 %}
+              {% assign book_id = item.link | split: '/ebooks/' | last %}
+              {% assign language = item.description | replace: 'Language: ', '' %}
+              
+              <div class="item">
+                  <img class="image-dither" 
+                       src="https://www.gutenberg.org/cache/epub/{{ book_id }}/pg{{ book_id }}.cover.medium.jpg" 
+                       alt="Cover of {{ item.title | strip }}"
+                       style="width: 60px; height: 80px; object-fit: cover;" />
+              
+                <div class="content">
+                  <span class="title title--small">{{ item.title | strip | truncate: 35 }}</span>
+                  <span class="description">ID: {{ book_id }} | {{ language }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          
+          <!-- Second Column -->
+          <div class="column">
+            {% for item in rss.channel.item offset: half_count %}
+              {% assign book_count = book_count | plus: 1 %}
+              {% assign book_id = item.link | split: '/ebooks/' | last %}
+              {% assign language = item.description | replace: 'Language: ', '' %}
+              
+              <div class="item">
+                  <img class="image-dither" 
+                       src="https://www.gutenberg.org/cache/epub/{{ book_id }}/pg{{ book_id }}.cover.medium.jpg" 
+                       alt="Cover of {{ item.title | strip }}"
+                       style="width: 60px; height: 80px; object-fit: cover;" />
+                <div class="content">
+                  <span class="title title--small">  {{ item.title | strip | truncate: 35 }}</span>
+                  <span class="description">ID: {{ book_id }} | {{ language }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Handle case when no books available -->
+        {% if rss.channel.item.size == 0 %}
+          <div class="layout layout--center">
+            <div class="content content--center">
+              <span class="title">No Recent Books Found</span>
+              <span class="description">RSS feed may be temporarily unavailable</span>
+            </div>
+          </div>
+        {% endif %}
+        
+      </div>
+      
+      <!-- Title Bar -->
+      <div class="title_bar">
+        <span class="image">📚</span>
+        <span class="title">Project Gutenberg Recent Books</span>
+        <span class="instance">{{ rss.channel.lastBuildDate | date: "%b %d, %Y at %H:%M" }}</span>
+      </div>
+      
